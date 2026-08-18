@@ -28,31 +28,57 @@ import os
 import smtplib
 import ssl
 import sys
+import time
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from email.mime.text import MIMEText
 
 CNN_URL = "https://production.dataviz.cnn.io/index/fearandgreed/graphdata/"
+# Public proxy fallback: routes the request through a different server so it
+# isn't coming from GitHub Actions' well-known (and sometimes-blocked) IP range.
+PROXY_URL = "https://api.allorigins.win/raw?url=" + urllib.parse.quote(CNN_URL, safe="")
 HISTORY_KEEP_DAYS = 14  # how much history to retain in state.json
+
+BROWSER_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0 Safari/537.36"
+    ),
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": "https://www.cnn.com/markets/fear-and-greed",
+    "Origin": "https://www.cnn.com",
+    "Connection": "keep-alive",
+}
+
+
+def _fetch_json(url):
+    req = urllib.request.Request(url, headers=BROWSER_HEADERS)
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        return json.load(resp)
 
 
 def fetch_fear_greed():
-    req = urllib.request.Request(
-        CNN_URL,
-        headers={
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/120.0 Safari/537.36"
-            )
-        },
-    )
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        data = json.load(resp)
-    current = data["fear_and_greed"]
-    score = round(float(current["score"]), 1)
-    rating = current["rating"].title()
-    return score, rating
+    """Try fetching directly first; if that's blocked, fall back to a
+    public proxy (changes the requesting IP, which sidesteps IP-based
+    blocks that don't respond to header changes alone)."""
+    urls_to_try = [CNN_URL, PROXY_URL, CNN_URL]
+    last_error = None
+    for i, url in enumerate(urls_to_try):
+        try:
+            data = _fetch_json(url)
+            current = data["fear_and_greed"]
+            score = round(float(current["score"]), 1)
+            rating = current["rating"].title()
+            return score, rating
+        except Exception as e:
+            last_error = e
+            print(f"Attempt {i + 1} failed ({'proxy' if url == PROXY_URL else 'direct'}): {e}")
+            if i < len(urls_to_try) - 1:
+                time.sleep(3)
+    raise last_error
 
 
 def load_state(path):
