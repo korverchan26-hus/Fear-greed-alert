@@ -29,7 +29,11 @@ jobs:
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           ALERT_TO: ${{ secrets.ALERT_TO }}
           TRIGGER_LEVELS: "Fear,Extreme Fear"
-          REQUIRED_DAYS: "2"
+          REQUIRED_DAYS: "3"
+          PRIMARY_REPEAT: "true"
+          ESCALATION_LEVELS: "Extreme Fear"
+          ESCALATION_REQUIRED_DAYS: "3"
+          ESCALATION_REPEAT: "true"
         run: python fear_greed_alert.py
 
       - name: Save updated state
