@@ -1,0 +1,41 @@
+name: Fear & Greed Check
+
+on:
+  schedule:
+    - cron: "45 13 * * 1-5"  # ~9:45am ET (adjust for daylight saving as needed)
+    - cron: "45 19 * * 1-5"  # ~3:45pm ET
+  workflow_dispatch: {}      # lets you trigger it manually from the Actions tab
+
+permissions:
+  contents: write  # needed so the workflow can commit state.json back
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run Fear & Greed check
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          ALERT_TO: ${{ secrets.ALERT_TO }}
+          TRIGGER_LEVELS: "Fear,Extreme Fear"
+          REQUIRED_DAYS: "2"
+        run: python fear_greed_alert.py
+
+      - name: Save updated state
+        run: |
+          git config user.name "fear-greed-bot"
+          git config user.email "actions@github.com"
+          git add state.json
+          git diff --quiet --cached || git commit -m "Update fear/greed state [skip ci]"
+          git push
