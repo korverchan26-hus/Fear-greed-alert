@@ -89,6 +89,11 @@
       "date": "2026-09-11",
       "rating": "Fear",
       "score": 33.6
+    },
+    {
+      "date": "2026-09-14",
+      "rating": "Fear",
+      "score": 30.9
     }
   ],
   "last_alert": null,
