@@ -99,14 +99,19 @@
       "date": "2026-09-15",
       "rating": "Fear",
       "score": 28.4
+    },
+    {
+      "date": "2026-09-16",
+      "rating": "Fear",
+      "score": 29.8
     }
   ],
   "last_alert": null,
   "last_alert_primary": {
-    "date": "2026-09-11",
+    "date": "2026-09-16",
     "rating": "Fear",
     "streak_start": "2026-09-01",
-    "multiple": 3
+    "multiple": 4
   },
   "last_alert_escalation": null
 }
