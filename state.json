@@ -1,11 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-08-31",
-      "rating": "Neutral",
-      "score": 49.7
-    },
-    {
       "date": "2026-09-01",
       "rating": "Fear",
       "score": 43.6
@@ -149,6 +144,11 @@
       "date": "2026-10-09",
       "rating": "Fear",
       "score": 45.0
+    },
+    {
+      "date": "2026-10-12",
+      "rating": "Neutral",
+      "score": 45.7
     }
   ],
   "last_alert": null,
