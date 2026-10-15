@@ -1,11 +1,6 @@
 {
   "history": [
     {
-      "date": "2026-09-03",
-      "rating": "Fear",
-      "score": 35.4
-    },
-    {
       "date": "2026-09-04",
       "rating": "Fear",
       "score": 41.8
@@ -149,14 +144,19 @@
       "date": "2026-10-14",
       "rating": "Fear",
       "score": 31.2
+    },
+    {
+      "date": "2026-10-15",
+      "rating": "Fear",
+      "score": 31.3
     }
   ],
   "last_alert": null,
   "last_alert_primary": {
-    "date": "2026-10-07",
+    "date": "2026-10-15",
     "rating": "Fear",
-    "streak_start": "2026-09-01",
-    "multiple": 9
+    "streak_start": "2026-10-13",
+    "multiple": 1
   },
   "last_alert_escalation": null
 }
